@@ -148,7 +148,7 @@ function drawMoon() {
 //Draw the ground
 function drawGround(){
     noStroke();
-	fill(102, 0, 51);
+	fill(53, 121, 40);
 	rect(0, floorPos_y, height, width - floorPos_y); 
 }
 

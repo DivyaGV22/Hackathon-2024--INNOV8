@@ -175,7 +175,7 @@ function draw()
     ///////////DRAWING CODE//////////
 
     //Dark blue sky colour
-    background(45,90,129); 
+    background(0,255,255); 
     
     // Draw the Moon
     drawMoon();
@@ -188,7 +188,7 @@ function draw()
 
     //Light blue ground colour
     noStroke();
-    fill(223,245,244);
+    fill(128,128,128);
     rect(0, floorPos_y, width, height - floorPos_y); 
     
     push();
