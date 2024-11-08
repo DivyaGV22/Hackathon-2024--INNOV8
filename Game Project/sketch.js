@@ -18,7 +18,7 @@ var cameraPosX;
 //Add game score
 var game_score;
 //Add in flag pole
-var flagpole;
+var building;
 //Add in lives
 var lives;
 // Define the maximum score
@@ -42,6 +42,7 @@ var onPlatform;
 var enemies;
 //Used to determine if gameChar is hit by enemy
 var hitByEnemy;
+
 
 
 
@@ -72,6 +73,10 @@ function preload(){
 
     failSound = loadSound("assets/fail.wav");
     failSound.setVolume(0.5);
+
+    saladImage = loadImage("images/salad.png");
+    waterImage = loadImage("images/water.png");
+    towelImage = loadImage("images/towel.png");
 }
 
 
@@ -131,19 +136,22 @@ function init(){
     
     cameraPosX=0;
     
-    var collectable1 = {x_pos:-350, y_pos:floorPos_y-20, size:40, isFound: false};
-    var collectable2 = {x_pos:-150, y_pos:floorPos_y-20, size:40, isFound: false};
-    var collectable3 = {x_pos:10, y_pos:floorPos_y-20, size:40, isFound: false};
-    var collectable4 = {x_pos:170, y_pos:floorPos_y-20, size:40, isFound: false};
-    var collectable5 = {x_pos:420, y_pos:floorPos_y-20, size:40, isFound: false};
-    var collectable6 = {x_pos:750, y_pos:floorPos_y-20, size:40, isFound: false};
-    var collectable7 = {x_pos:1100, y_pos:floorPos_y-20, size:40, isFound: false};
-    var collectable8 = {x_pos:1200, y_pos:floorPos_y-20, size:40, isFound: false};
-    var collectable9 = {x_pos:480, y_pos:310, size:40, isFound: false};
-    var collectable10 = {x_pos:930, y_pos:160, size:40, isFound: false};
-   
-  collectables = [collectable1, collectable2, collectable3, collectable4, collectable5, collectable6,collectable7,collectable8,collectable9,collectable10];
-    
+
+    collectables = [
+    { x_pos: -350, y_pos: floorPos_y - 20, size: 40, isFound: false, img: saladImage },
+    { x_pos: -150, y_pos: floorPos_y - 20, size: 40, isFound: false, img: waterImage },
+    { x_pos: 10, y_pos: floorPos_y - 20, size: 40, isFound: false, img: towelImage },
+    { x_pos: 170, y_pos: floorPos_y - 20, size: 40, isFound: false, img: saladImage },
+    { x_pos: 420, y_pos: floorPos_y - 20, size: 40, isFound: false, img: waterImage },
+    { x_pos: 750, y_pos: floorPos_y - 20, size: 40, isFound: false, img: towelImage },
+    { x_pos: 1100, y_pos: floorPos_y - 20, size: 40, isFound: false, img: saladImage },
+    { x_pos: 1200, y_pos: floorPos_y - 20, size: 40, isFound: false, img: waterImage },
+    { x_pos: 480, y_pos: 310, size: 40, isFound: false, img: towelImage },
+    { x_pos: 930, y_pos: 160, size: 40, isFound: false, img: saladImage }
+    ];
+
+
+
 
     var canyon2 = {x_pos: -300, width: 100};
     var canyon3 = {x_pos: -100, width: 100};
@@ -155,7 +163,7 @@ function init(){
     
     canyons =  [canyon2, canyon3, canyon4, canyon5, canyon6, canyon7, canyon8];
       
-    flagpole = {x_pos:1200, isReached:false};
+    building = {x_pos:1200, isReached:false};
     
     //  Initialise stars directly in setup
     for (var i = 0; i < 100; i++) {
@@ -175,7 +183,7 @@ function draw()
     ///////////DRAWING CODE//////////
 
     //Dark blue sky colour
-    background(0,255,255); 
+    background(17,143,240); 
     
     // Draw the Moon
     drawMoon();
@@ -210,7 +218,7 @@ function draw()
     drawTrees();
    
     //Draw flag pole
-    drawFlagpole();
+    drawbuilding();
     
     //Draw the platforms
     drawPlatforms();
@@ -323,7 +331,7 @@ function draw()
     checkIfGameCharIsOverAnyCanyons();
     
     //check if game char has reached flag pole
-    checkIfGameCharReachFlagpole();
+    checkIfGameCharReachbuilding();
     
     //Call checkIfCharacterIsUnderAnyPlatforms()
     checkIfCharacterIsOnAnyPlatforms();
@@ -527,28 +535,29 @@ function keyReleased()
     
 }
 
-//Draws collectable items
+// function drawCollectable(t_collectable) {
+//     if (!t_collectable.isFound) {
+//       // Adjust the image size and position as needed
+//       let size = t_collectable.size;
+//       let x = t_collectable.x_pos;
+//       let y = t_collectable.y_pos;
+      
+//       // Draw the salad image at the specified position with the specified size
+//       image(saladImage, x - size / 2, y - size / 2, size, size);
+//     }
+//   }
 function drawCollectable(t_collectable) {
     if (!t_collectable.isFound) {
-        fill(122,59,23);
-        let size = t_collectable.size;
-        let top_x = t_collectable.x_pos;
-        let top_y = t_collectable.y_pos - (size / 2) + 50;
-        let bottom_left_x = t_collectable.x_pos - size / 2;
-        let bottom_left_y = t_collectable.y_pos + (size / 2) - 20;
-        let bottom_right_x = t_collectable.x_pos + size / 2;
-        let bottom_right_y = t_collectable.y_pos + (size / 2) - 20;
-        triangle(top_x, top_y, bottom_left_x, bottom_left_y, bottom_right_x, bottom_right_y);
-        fill(100,28,28);
-        rect(t_collectable.x_pos-5,t_collectable.y_pos-27,t_collectable.size/4,t_collectable.size/2);
-        fill(100,28,28);
-        let diameter = t_collectable.size;
-        let radius = diameter / 2;
-        let center_x = t_collectable.x_pos;
-        let center_y = t_collectable.y_pos-20 + radius;
-        arc(center_x, center_y, diameter, diameter, PI, TWO_PI);
+      let size = t_collectable.size;
+      let x = t_collectable.x_pos;
+      let y = t_collectable.y_pos;
+  
+      // Draw the collectable's image
+      image(t_collectable.img, x - size / 2, y - size / 2, size, size);
     }
-}
+  }
+  
+  
 
 
 //Draws canyons
@@ -584,50 +593,73 @@ function checkIfGameCharIsOverCanyon(t_canyon){
     }
 }
 
-//Draws flagpole
-function drawFlagpole(){
-    fill(125);
-    rect(flagpole.x_pos+5,floorPos_y-400,25,400);
-    // Draw the circle on top of the flagpole
-    fill(239,255,0); // Colour of circle on top is black
-    ellipse(flagpole.x_pos + 18, floorPos_y - 405, 35, 20); // Circle with diameter 20
+// //Draws building
+// function drawbuilding(){
+//     fill(125);
+//     rect(building.x_pos+5,floorPos_y-400,25,400);
+//     // Draw the circle on top of the building
+//     fill(239,255,0); // Colour of circle on top is black
+//     ellipse(building.x_pos + 18, floorPos_y - 405, 35, 20); // Circle with diameter 20
     
-   // Draw the flag using quads and triangles
-    fill(255, 102, 178); // Red colour for the flag
-    if (flagpole.isReached) {
-        // Flag up
-        // Draw the main body of the flag as a quad
-        quad(flagpole.x_pos + 30, floorPos_y - 400,
-             flagpole.x_pos + 130, floorPos_y - 390,
-             flagpole.x_pos + 130, floorPos_y - 360,
-             flagpole.x_pos + 30, floorPos_y - 350);
+//    // Draw the flag using quads and triangles
+//     fill(255, 102, 178); // Red colour for the flag
+//     if (building.isReached) {
+//         // Flag up
+//         // Draw the main body of the flag as a quad
+//         quad(building.x_pos + 30, floorPos_y - 400,
+//              building.x_pos + 130, floorPos_y - 390,
+//              building.x_pos + 130, floorPos_y - 360,
+//              building.x_pos + 30, floorPos_y - 350);
 
-        // Add a triangle to give the flag a more dynamic look
-        triangle(flagpole.x_pos + 130, floorPos_y - 390,
-                 flagpole.x_pos + 160, floorPos_y - 375,
-                 flagpole.x_pos + 130, floorPos_y - 360);
-    } else {
-        // Flag down
-        // Draw the main body of the flag as a quad
-        quad(flagpole.x_pos + 30, floorPos_y - 50,
-             flagpole.x_pos + 130, floorPos_y - 40,
-             flagpole.x_pos + 130, floorPos_y - 10,
-             flagpole.x_pos + 30, floorPos_y - 0);
+//         // Add a triangle to give the flag a more dynamic look
+//         triangle(building.x_pos + 130, floorPos_y - 390,
+//                  building.x_pos + 160, floorPos_y - 375,
+//                  building.x_pos + 130, floorPos_y - 360);
+//     } else {
+//         // Flag down
+//         // Draw the main body of the flag as a quad
+//         quad(building.x_pos + 30, floorPos_y - 50,
+//              building.x_pos + 130, floorPos_y - 40,
+//              building.x_pos + 130, floorPos_y - 10,
+//              building.x_pos + 30, floorPos_y - 0);
 
-        // Add a triangle to give the flag a more dynamic look
-        triangle(flagpole.x_pos + 130, floorPos_y - 40,
-                 flagpole.x_pos + 160, floorPos_y - 25,
-                 flagpole.x_pos + 130, floorPos_y - 10);
-    }
+//         // Add a triangle to give the flag a more dynamic look
+//         triangle(building.x_pos + 130, floorPos_y - 40,
+//                  building.x_pos + 160, floorPos_y - 25,
+//                  building.x_pos + 130, floorPos_y - 10);
+//     }
+
+// }
+//Draws building
+function drawbuilding(){
+    fill(255,212,255);
+    rect(building.x_pos+5,floorPos_y-400,125,400);
+    fill(192,192,192)
+    rect(building.x_pos+10, floorPos_y-385,40,25);
+    rect(building.x_pos+85, floorPos_y-385,40,25);
+    rect(building.x_pos+10, floorPos_y-325,40,25);
+    rect(building.x_pos+85, floorPos_y-325,40,25);
+    rect(building.x_pos+10, floorPos_y-275,40,25);
+    rect(building.x_pos+85, floorPos_y-275,40,25);
+    rect(building.x_pos+10, floorPos_y-225,40,25);
+    rect(building.x_pos+85, floorPos_y-225,40,25);
+    fill(107,84,11);
+    rect(building.x_pos+43, floorPos_y-100,40,100);
+    fill(182,143,16);
+    rect(building.x_pos+48, floorPos_y-90,30,90);
+    fill(246,202,57);
+    ellipse(building.x_pos + 68, floorPos_y - 50, 5, 5);
+
 
 }
+
     
-//Check if game character reached the flagpole
-function checkIfGameCharReachFlagpole(){
-    if(flagpole.isReached==false){
-        var d = dist(gameChar_x,gameChar_y,flagpole.x_pos,floorPos_y)
+//Check if game character reached the building
+function checkIfGameCharReachbuilding(){
+    if(building.isReached==false){
+        var d = dist(gameChar_x,gameChar_y,building.x_pos,floorPos_y)
         if(d<10){
-            flagpole.isReached=true;
+            building.isReached=true;
             gameOver = true;
          
         }
@@ -664,7 +696,7 @@ function drawGameOver() {
         message = "Oh No! Rabbito Caught You Snagging Its Acorns—Give It Another Shot! ";
         // Stop the background sound
         backgroundSound.stop();
-    } else if (game_score == 100 && flagpole.isReached) {
+    } else if (game_score == 100 && building.isReached) {
         message = "Congratulations! You’ve Reached The Flag And Scored The Highest! Enjoy The Glory!";
         winSound.play(); // Play the enemy hit sound
         // Stop the background sound
